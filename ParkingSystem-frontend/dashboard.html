@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Parking System - Dashboard</title>
+  <script>
+    if (!sessionStorage.getItem("token")) {
+      window.location.href = "index.html";
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <i class="fa-solid fa-square-parking"></i> Parking System
+    </div>
+    <button id="logout" class="logout-btn">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </button>
+  </nav>
+
+  <main class="dashboard-main">
+    <section class="availability-card">
+      <div class="availability-text">
+        <h1>Parking Availability</h1>
+        <p class="subtext">Live count of open parking slots</p>
+        <button id="checkAvailability" class="primary-btn">
+          <i class="fa-solid fa-arrows-rotate"></i> Refresh
+        </button>
+      </div>
+      <div class="availability-stat">
+        <span id="availableCount">—</span>
+        <span class="stat-divider">/</span>
+        <span id="totalCount">—</span>
+        <p class="stat-label">Slots Available</p>
+      </div>
+    </section>
+
+    <section id="adminControls" class="admin-card" style="display: none;">
+      <h2><i class="fa-solid fa-user-shield"></i> Admin Controls</h2>
+      <div class="admin-actions">
+        <div class="admin-action">
+          <p>Mark the next free slot as occupied</p>
+          <button id="occupySlot" class="secondary-btn">Occupy a Slot</button>
+        </div>
+        <div class="admin-action">
+          <p>Release a slot by its number</p>
+          <div class="release-row">
+            <div class="input-wrap">
+              <i class="fa-solid fa-hashtag"></i>
+              <input type="text" id="releaseSlotNumber" placeholder="e.g. S1" />
+            </div>
+            <button id="releaseSlot" class="secondary-btn">Release</button>
+          </div>
+        </div>
+      </div>
+      <p id="adminMessage" class="result-text"></p>
+    </section>
+  </main>
+
+  <script src="js/shared.js"></script>
+  <script src="js/parking.js"></script>
+</body>
+
+</html>

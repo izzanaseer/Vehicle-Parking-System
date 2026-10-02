@@ -1,0 +1,58 @@
+@ParkingSystem_HostAddress = http://localhost:5001
+
+POST {{ParkingSystem_HostAddress}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "izza@gmail.com", 
+    "password": "Test123"
+}
+
+###
+POST {{ParkingSystem_HostAddress}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "admin@gmail.com", 
+    "password": "Admin123"
+}
+
+### Login
+POST {{ParkingSystem_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "Admin123"
+}
+
+### 1. Check availability
+GET {{ParkingSystem_HostAddress}}/api/parking/availability
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJQYXJraW5nU3lzdGVtVXNlcnMiLCJpc3MiOiJQYXJraW5nU3lzdGVtIiwiZXhwIjoxNzkwOTEzMjk3LCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImlhdCI6MTc5MDkwOTY5NywibmJmIjoxNzkwOTA5Njk3fQ._8_PsHNeW8Oiv4JWmWu2qnPgqMxntVWyBNAvdNkzmaI
+
+### 2. Issue Ticket
+POST {{ParkingSystem_HostAddress}}/api/parking/tickets
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJQYXJraW5nU3lzdGVtVXNlcnMiLCJpc3MiOiJQYXJraW5nU3lzdGVtIiwiZXhwIjoxNzkwOTEzMjk3LCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImlhdCI6MTc5MDkwOTY5NywibmJmIjoxNzkwOTA5Njk3fQ._8_PsHNeW8Oiv4JWmWu2qnPgqMxntVWyBNAvdNkzmaI
+{
+  "vehicleNumber": "TRK-002",
+  "vehicleType": "Truck"
+}
+
+### 3. Calculate Exit Fee
+PATCH {{ParkingSystem_HostAddress}}/api/parking/tickets/1/exit
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJQYXJraW5nU3lzdGVtVXNlcnMiLCJpc3MiOiJQYXJraW5nU3lzdGVtIiwiZXhwIjoxNzkwOTEzMjk3LCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImlhdCI6MTc5MDkwOTY5NywibmJmIjoxNzkwOTA5Njk3fQ._8_PsHNeW8Oiv4JWmWu2qnPgqMxntVWyBNAvdNkzmaI
+
+### 4. Record Payment
+POST {{ParkingSystem_HostAddress}}/api/parking/tickets/1/pay
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJQYXJraW5nU3lzdGVtVXNlcnMiLCJpc3MiOiJQYXJraW5nU3lzdGVtIiwiZXhwIjoxNzkwOTEzMjk3LCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImlhdCI6MTc5MDkwOTY5NywibmJmIjoxNzkwOTA5Njk3fQ._8_PsHNeW8Oiv4JWmWu2qnPgqMxntVWyBNAvdNkzmaI
+
+{ 
+    "paymentMethod": "Cash" 
+}
