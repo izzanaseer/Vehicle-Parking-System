@@ -43,13 +43,27 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
 
         // Find or create the vehicle
         var vehicle = await db.Vehicles.FirstOrDefaultAsync(v => v.VehicleNumber == vehicleNumber);
+
         if (vehicle is null)
         {
             vehicle = new Vehicle { VehicleNumber = vehicleNumber, Type = request.VehicleType };
             db.Vehicles.Add(vehicle);
         }
+        else
+        {
+            if (vehicle.Type != request.VehicleType)
+            {
+                return BadRequest($"Vehicle {vehicleNumber} is registered as {vehicle.Type}, not {request.VehicleType}.");
+            }
+            
+            var alreadyParked = await db.ParkingTickets
+                .AnyAsync(t => t.VehicleId == vehicle.Id && t.ExitTime == null);
+            if (alreadyParked)
+            {
+                return Conflict($"Vehicle {vehicleNumber} is already parked and hasn't exited yet.");
+            }
+        }
 
-        // Find a free slot matching the vehicle type
         var slot = await db.ParkingSlots.FirstOrDefaultAsync(
             s => s.SlotType == request.VehicleType && !s.IsOccupied);
 
@@ -153,6 +167,7 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
             slotFreed = ticket.Slot.SlotNumber
         });
     }
+    
 }
 
 

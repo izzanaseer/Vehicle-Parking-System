@@ -31,7 +31,10 @@ public class ParkingSpaceTracker
     public bool TryOccupySlot(VehicleType type)
     {
         var available = GetAvailable(type);
-        if (available == 0) return false;
+        if (available == 0) 
+        {
+            return false;
+        }
 
         _availableSlots[type] = available - 1;
         return true;
@@ -41,7 +44,10 @@ public class ParkingSpaceTracker
     {
         var available = GetAvailable(type);
         var total = GetTotal(type);
-        if (available >= total) return false;
+        if (available >= total) 
+        {
+            return false;
+        }
 
         _availableSlots[type] = available + 1;
         return true;

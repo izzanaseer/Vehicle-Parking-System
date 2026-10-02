@@ -41,27 +41,47 @@
     </section>
 
     <section id="adminControls" class="admin-card" style="display: none;">
-      <h2><i class="fa-solid fa-user-shield"></i> Admin Controls</h2>
-      <div class="admin-actions">
-        <div class="admin-action">
-          <p>Mark the next free slot as occupied</p>
-          <button id="occupySlot" class="secondary-btn">Occupy a Slot</button>
+      <h2><i class="fa-solid fa-user-shield"></i> Issue Ticket</h2>
+      <div class="ticket-form">
+        <div class="input-wrap">
+          <i class="fa-solid fa-hashtag"></i>
+          <input type="text" id="vehicleNumber" placeholder="Vehicle number, e.g. ABC-123" />
         </div>
-        <div class="admin-action">
-          <p>Release a slot by its number</p>
-          <div class="release-row">
-            <div class="input-wrap">
-              <i class="fa-solid fa-hashtag"></i>
-              <input type="text" id="releaseSlotNumber" placeholder="e.g. S1" />
-            </div>
-            <button id="releaseSlot" class="secondary-btn">Release</button>
-          </div>
-        </div>
+        <select id="vehicleType">
+          <option value="Car">Car</option>
+          <option value="Bike">Bike</option>
+          <option value="Truck">Truck</option>
+        </select>
+        <button id="issueTicket" class="primary-btn">Issue Ticket</button>
       </div>
-      <p id="adminMessage" class="result-text"></p>
+      <div id="issuedTicket" class="ticket-result"></div>
+
+      <hr />
+
+      <h2><i class="fa-solid fa-right-from-bracket"></i> Exit & Payment</h2>
+      <div class="ticket-form">
+        <div class="input-wrap">
+          <i class="fa-solid fa-ticket"></i>
+          <input type="number" id="exitTicketId" placeholder="Ticket ID" />
+        </div>
+        <button id="calculateExit" class="secondary-btn">Calculate Exit Fee</button>
+      </div>
+      <div id="exitResult" class="result-text"></div>
+
+      <div id="paymentSection" style="display: none;" class="ticket-form">
+        <select id="paymentMethod">
+          <option value="Cash">Cash</option>
+          <option value="Card">Card</option>
+          <option value="JazzCash">JazzCash</option>
+        </select>
+        <button id="confirmPayment" class="primary-btn">Confirm Payment</button>
+      </div>
+      <div id="paymentResult" class="result-text"></div>
     </section>
   </main>
 
+  <div id="printTicket" class="print-only"></div>
+  
   <script src="js/shared.js"></script>
   <script src="js/parking.js"></script>
 </body>

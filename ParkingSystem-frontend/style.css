@@ -249,3 +249,35 @@ body { background: #f5f6f8; }
   font-size: 0.9rem;
   color: #374151;
 }
+
+/* PART 2 */
+.print-only { display: none; }
+
+@media print {
+  body > *:not(.print-only) { display: none !important; }
+  .print-only {
+    display: block !important;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+/* TICKET FORM LAYOUT */
+.ticket-form {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+}
+
+.ticket-form select, .ticket-form input {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.ticket-result, .result-text { margin-top: 1rem; }
+
+.error-text { color: #dc2626; }
