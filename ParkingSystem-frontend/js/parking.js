@@ -8,7 +8,8 @@ function getRoleFromToken(token) {
 }
 
 const role = getRoleFromToken(getToken());
-if (role === "Admin") {
+if (role === "Admin") 
+{
   document.getElementById("adminControls").style.display = "grid";
 }
 
@@ -27,11 +28,14 @@ const vehicleColors = { Car: "green", Bike: "purple", Truck: "orange" };
 document.getElementById("checkAvailability").addEventListener("click", async () => {
   const grid = document.getElementById("statGrid");
 
-  const response = await fetch(`${API_BASE}/parking/availability`, {
-    headers: { "Authorization": `Bearer ${getToken()}` }
-  });
+  const response = await authorizedFetch(`${API_BASE}/parking/availability`);
+  if (!response) 
+  { 
+    return;
+  }
 
-  if (!response.ok) {
+  if (!response.ok) 
+  {
     grid.innerHTML = `<p class="error-text">Failed to load availability.</p>`;
     return;
   }
@@ -56,14 +60,12 @@ document.getElementById("issueTicket").addEventListener("click", async () => {
   const vehicleType = document.getElementById("vehicleType").value;
   const resultEl = document.getElementById("issuedTicket");
 
-  const response = await fetch(`${API_BASE}/parking/tickets`, {
+  const response = await authorizedFetch(`${API_BASE}/parking/tickets`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ vehicleNumber, vehicleType })
   });
+  if (!response) return;
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -97,36 +99,63 @@ document.getElementById("calculateExit").addEventListener("click", async () => {
   const ticketId = document.getElementById("exitTicketId").value;
   const resultEl = document.getElementById("exitResult");
 
-  const response = await fetch(`${API_BASE}/parking/tickets/${ticketId}/exit`, {
-    method: "PATCH",
-    headers: { "Authorization": `Bearer ${getToken()}` }
+  const response = await authorizedFetch(`${API_BASE}/parking/tickets/${ticketId}/exit`, {
+    method: "PATCH"
   });
+  if (!response) return;
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    resultEl.innerHTML = `<p class="error-text">${errorText}</p>`;
+  if (response.ok) {
+    const data = await response.json();
+    resultEl.innerHTML = `<p class="success-text">Fee: Rs. ${data.feeAmount} — ${data.vehicleNumber}</p>`;
+    showPaymentSection(ticketId);
     return;
   }
 
-  const data = await response.json();
-  resultEl.innerHTML = `<p class="success-text">Fee: Rs. ${data.feeAmount} — ${data.vehicleNumber}</p>`;
+  // Exit calculation failed — check the ticket's actual current state before giving up
+  const ticketResponse = await authorizedFetch(`${API_BASE}/parking/tickets/${ticketId}`);
+  if (!ticketResponse) return;
+
+  if (!ticketResponse.ok) 
+  {
+    resultEl.innerHTML = `<p class="error-text">Ticket not found.</p>`;
+    return;
+  }
+
+  const ticket = await ticketResponse.json();
+
+  if (ticket.isPaid) 
+  {
+    resultEl.innerHTML = `<p class="error-text">This ticket is already paid and closed.</p>`;
+  } 
+  else if (ticket.exitTime) 
+  {
+    // Exit was already calculated earlier — recover straight into payment
+    resultEl.innerHTML = `<p class="success-text">Exit already calculated. Fee: Rs. ${ticket.feeAmount} — ${ticket.vehicleNumber}</p>`;
+    showPaymentSection(ticketId);
+  } 
+  else 
+  {
+    const errorText = await response.text();
+    resultEl.innerHTML = `<p class="error-text">${errorText}</p>`;
+  }
+});
+
+function showPaymentSection(ticketId) {
   document.getElementById("paymentSection").style.display = "flex";
   document.getElementById("paymentSection").dataset.ticketId = ticketId;
-});
+}
 
 document.getElementById("confirmPayment").addEventListener("click", async () => {
   const ticketId = document.getElementById("paymentSection").dataset.ticketId;
   const paymentMethod = document.getElementById("paymentMethod").value;
   const resultEl = document.getElementById("paymentResult");
 
-  const response = await fetch(`${API_BASE}/parking/tickets/${ticketId}/pay`, {
+  const response = await authorizedFetch(`${API_BASE}/parking/tickets/${ticketId}/pay`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ paymentMethod })
   });
+  if (!response) return;
 
   if (!response.ok) {
     const errorText = await response.text();

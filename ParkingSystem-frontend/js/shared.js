@@ -11,3 +11,21 @@ function getToken() {
 function clearToken() {
   sessionStorage.removeItem("token");
 }
+
+async function authorizedFetch(url, options = {}) {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      "Authorization": `Bearer ${getToken()}`
+    }
+  });
+
+  if (response.status === 401) {
+    clearToken();
+    window.location.href = "index.html";
+    return null;
+  }
+
+  return response;
+}

@@ -127,6 +127,28 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
         });
     }
     
+    [Authorize(Roles = "Admin")]
+    [HttpGet("tickets/{id}")]
+    public async Task<IActionResult> GetTicket(int id)
+    {
+        var ticket = await db.ParkingTickets
+            .Include(t => t.Vehicle)
+            .Include(t => t.Slot)
+            .FirstOrDefaultAsync(t => t.Id == id);
+
+        if (ticket is null) return NotFound("Ticket not found.");
+
+        return Ok(new
+        {
+            ticketId = ticket.Id,
+            vehicleNumber = ticket.Vehicle.VehicleNumber,
+            slotNumber = ticket.Slot.SlotNumber,
+            entryTime = ticket.EntryTime,
+            exitTime = ticket.ExitTime,
+            feeAmount = ticket.FeeAmount,
+            isPaid = ticket.IsPaid
+        });
+    }
 
     [Authorize(Roles = "Admin")]
     [HttpPost("tickets/{id}/pay")]
