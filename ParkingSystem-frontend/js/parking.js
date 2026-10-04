@@ -1,9 +1,7 @@
-// Redirect to login if there's no token at all
 if (!getToken()) {
   window.location.href = "index.html";
 }
 
-// Decode the token's payload to check the role (client-side, just for showing/hiding UI)
 function getRoleFromToken(token) {
   const payload = JSON.parse(atob(token.split(".")[1]));
   return payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
@@ -11,29 +9,48 @@ function getRoleFromToken(token) {
 
 const role = getRoleFromToken(getToken());
 if (role === "Admin") {
-  document.getElementById("adminControls").style.display = "block";
+  document.getElementById("adminControls").style.display = "grid";
 }
 
-// Availability — per vehicle type
+function getEmailFromToken(token) {
+  const payload = JSON.parse(atob(token.split(".")[1]));
+  return payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
+}
+
+document.getElementById("profileEmail").textContent = getEmailFromToken(getToken());
+document.getElementById("profileRole").textContent = role;
+document.getElementById("welcomeUser").textContent = role;
+
+const vehicleIcons = { Car: "fa-car", Bike: "fa-motorcycle", Truck: "fa-truck" };
+const vehicleColors = { Car: "green", Bike: "purple", Truck: "orange" };
+
 document.getElementById("checkAvailability").addEventListener("click", async () => {
+  const grid = document.getElementById("statGrid");
+
   const response = await fetch(`${API_BASE}/parking/availability`, {
     headers: { "Authorization": `Bearer ${getToken()}` }
   });
 
   if (!response.ok) {
-    document.getElementById("availableCount").textContent = "Error";
+    grid.innerHTML = `<p class="error-text">Failed to load availability.</p>`;
     return;
   }
 
   const data = await response.json();
-  const car = data.find(d => d.vehicleType === "Car");
-  document.getElementById("availableCount").textContent = car ? car.available : "-";
-  document.getElementById("totalCount").textContent = car ? car.total : "-";
+
+  grid.innerHTML = data.map(d => `
+  <div class="stat-card stat-${vehicleColors[d.vehicleType] || "green"}">
+    <i class="fa-solid ${vehicleIcons[d.vehicleType] || "fa-square-parking"}"></i>
+    <div class="stat-numbers">
+      <span class="stat-available">${d.available}</span>
+      <span class="stat-divider">/</span>
+      <span class="stat-total">${d.total}</span>
+    </div>
+    <p class="stat-label">${d.vehicleType}</p>
+  </div>
+`).join("");
 });
 
-document.getElementById("checkAvailability").click();           //To load availabilty immediately on opening page instead of waiting for click.
-
-// Issue ticket
 document.getElementById("issueTicket").addEventListener("click", async () => {
   const vehicleNumber = document.getElementById("vehicleNumber").value;
   const vehicleType = document.getElementById("vehicleType").value;
@@ -41,16 +58,14 @@ document.getElementById("issueTicket").addEventListener("click", async () => {
 
   const response = await fetch(`${API_BASE}/parking/tickets`, {
     method: "POST",
-    headers: 
-    {
+    headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${getToken()}`
     },
     body: JSON.stringify({ vehicleNumber, vehicleType })
   });
 
-  if (!response.ok) 
-  {
+  if (!response.ok) {
     const errorText = await response.text();
     resultEl.innerHTML = `<p class="error-text">${errorText}</p>`;
     return;
@@ -59,8 +74,8 @@ document.getElementById("issueTicket").addEventListener("click", async () => {
   const data = await response.json();
 
   resultEl.innerHTML = `
-    <p>Ticket #${data.ticketId} — Slot ${data.slotNumber} — ${data.vehicleNumber}</p>
-    <button id="printBtn" class="secondary-btn">Print Ticket</button>
+    <p class="success-text">Ticket #${data.ticketId} issued — Slot ${data.slotNumber}</p>
+    <button id="printBtn" class="secondary-btn"><i class="fa-solid fa-print"></i> Print Ticket</button>
   `;
 
   document.getElementById("printBtn").addEventListener("click", () => {
@@ -78,7 +93,6 @@ document.getElementById("issueTicket").addEventListener("click", async () => {
   document.getElementById("checkAvailability").click();
 });
 
-// Calculate exit
 document.getElementById("calculateExit").addEventListener("click", async () => {
   const ticketId = document.getElementById("exitTicketId").value;
   const resultEl = document.getElementById("exitResult");
@@ -88,20 +102,18 @@ document.getElementById("calculateExit").addEventListener("click", async () => {
     headers: { "Authorization": `Bearer ${getToken()}` }
   });
 
-  if (!response.ok) 
-  {
+  if (!response.ok) {
     const errorText = await response.text();
-    resultEl.textContent = errorText;
+    resultEl.innerHTML = `<p class="error-text">${errorText}</p>`;
     return;
   }
 
   const data = await response.json();
-  resultEl.textContent = `Fee: Rs. ${data.feeAmount} for ${data.vehicleNumber}`;
+  resultEl.innerHTML = `<p class="success-text">Fee: Rs. ${data.feeAmount} — ${data.vehicleNumber}</p>`;
   document.getElementById("paymentSection").style.display = "flex";
   document.getElementById("paymentSection").dataset.ticketId = ticketId;
 });
 
-// Confirm payment
 document.getElementById("confirmPayment").addEventListener("click", async () => {
   const ticketId = document.getElementById("paymentSection").dataset.ticketId;
   const paymentMethod = document.getElementById("paymentMethod").value;
@@ -118,12 +130,12 @@ document.getElementById("confirmPayment").addEventListener("click", async () => 
 
   if (!response.ok) {
     const errorText = await response.text();
-    resultEl.textContent = errorText;
+    resultEl.innerHTML = `<p class="error-text">${errorText}</p>`;
     return;
   }
 
   const data = await response.json();
-  resultEl.textContent = `Paid via ${data.paymentMethod}. Slot ${data.slotFreed} freed.`;
+  resultEl.innerHTML = `<p class="success-text">Paid via ${data.paymentMethod}. Slot ${data.slotFreed} freed.</p>`;
   document.getElementById("paymentSection").style.display = "none";
   document.getElementById("exitTicketId").value = "";
   document.getElementById("checkAvailability").click();
@@ -132,7 +144,8 @@ document.getElementById("confirmPayment").addEventListener("click", async () => 
 document.getElementById("logout").addEventListener("click", () => {
   const confirmed = confirm("Are you sure you want to log out?");
   if (!confirmed) return;
-
   clearToken();
   window.location.href = "index.html";
 });
+
+document.getElementById("checkAvailability").click();

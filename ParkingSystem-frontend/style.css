@@ -104,7 +104,7 @@ button[type="submit"]:hover {
 
 
 /* NEW DASHBOARD */
-body { background: #f5f6f8; }
+body { background: #f4f5f7; }
 
 .navbar {
   display: flex;
@@ -132,101 +132,136 @@ body { background: #f5f6f8; }
   font-size: 0.85rem;
   cursor: pointer;
 }
-
 .logout-btn:hover { background: rgba(255,255,255,0.18); }
 
 .dashboard-main {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 2.5rem auto;
   padding: 0 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-}
-
-.availability-card {
-  background: white;
-  border-radius: 14px;
-  padding: 2.2rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   gap: 2rem;
 }
 
-.availability-text h1 {
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.section-header h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
 }
 
-.availability-text .subtext {
-  color: #6b7280;
-  margin: 0.3rem 0 1.2rem;
-  font-size: 0.9rem;
+.refresh-btn {
+  background: white;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #374151;
+}
+.refresh-btn:hover { background: #f9fafb; }
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
 }
 
-.availability-stat {
+.stat-card {
+  background: white;
+  border-radius: 14px;
+  padding: 1.6rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   text-align: center;
-  min-width: 160px;
 }
 
-.availability-stat span#availableCount {
+.stat-card i {
+  font-size: 1.4rem;
+  color: #1f2937;
+  margin-bottom: 0.6rem;
+}
+
+.stat-numbers { display: flex; justify-content: center; align-items: baseline; gap: 0.2rem; }
+
+.stat-available {
   font-family: 'Playfair Display', serif;
-  font-size: 2.8rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: #1f2937;
 }
 
-.stat-divider {
-  font-size: 1.8rem;
-  color: #9ca3af;
-  margin: 0 0.2rem;
-}
+.stat-divider { color: #9ca3af; font-size: 1.3rem; }
 
-.availability-stat span#totalCount {
-  font-size: 1.8rem;
-  color: #9ca3af;
-}
+.stat-total { font-size: 1.3rem; color: #9ca3af; }
 
 .stat-label {
-  color: #6b7280;
-  font-size: 0.8rem;
-  margin-top: 0.3rem;
-}
-
-.admin-card {
-  background: white;
-  border-radius: 14px;
-  padding: 2.2rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-}
-
-.admin-card h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-}
-
-.admin-actions {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.admin-action {
-  flex: 1;
-  min-width: 220px;
-}
-
-.admin-action p {
+  margin-top: 0.4rem;
   font-size: 0.85rem;
   color: #6b7280;
-  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.panel {
+  background: white;
+  border-radius: 14px;
+  padding: 1.8rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.panel h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  margin-bottom: 1.2rem;
+}
+
+.panel h2 i { margin-right: 0.4rem; color: #6b7280; }
+
+.panel label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.4rem;
+  margin-top: 0.9rem;
+}
+
+.panel label:first-of-type { margin-top: 0; }
+
+.panel select {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  background: white;
+}
+
+.panel .primary-btn, .panel .secondary-btn {
+  width: 100%;
+  margin-top: 1.2rem;
+}
+
+.panel .payment-row .primary-btn {
+  width: auto;
+  margin-top: 0;
 }
 
 .primary-btn, .secondary-btn {
-  padding: 0.7rem 1.3rem;
+  padding: 0.75rem 1.2rem;
   border: none;
   border-radius: 8px;
   font-family: 'Poppins', sans-serif;
@@ -234,25 +269,48 @@ body { background: #f5f6f8; }
   font-size: 0.9rem;
   cursor: pointer;
 }
-
 .primary-btn { background: #1f2937; color: white; }
 .primary-btn:hover { background: #111827; }
 .secondary-btn { background: #eef2f7; color: #1f2937; }
 .secondary-btn:hover { background: #e2e8f0; }
 
-.release-row { display: flex; gap: 0.6rem; }
-.release-row .input-wrap { flex: 1; }
-.release-row button { flex-shrink: 0; }
-
-.result-text {
+.payment-row {
+  display: flex;
+  gap: 0.6rem;
   margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #374151;
+  align-items: flex-end;
 }
 
-/* PART 2 */
-.print-only { display: none; }
+.payment-select-wrap {
+  flex: 1;
+  min-width: 140px;
+}
 
+.payment-select-wrap label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.4rem;
+}
+
+.payment-row select {
+  width: 100%;
+  margin: 0;
+}
+
+.payment-row button {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.panel-result { margin-top: 1rem; font-size: 0.9rem; }
+.panel-result p { margin: 0; }
+
+.success-text { color: #16a34a; font-weight: 500; }
+.error-text { color: #dc2626; font-weight: 500; }
+
+.print-only { display: none; }
 @media print {
   body > *:not(.print-only) { display: none !important; }
   .print-only {
@@ -262,22 +320,124 @@ body { background: #f5f6f8; }
   }
 }
 
-/* TICKET FORM LAYOUT */
-.ticket-form {
+
+/* SIDEBAR */
+html, body { height: 100%; }
+
+.app-shell {
   display: flex;
-  gap: 0.6rem;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: #1f2937;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.2rem;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  margin-top: 0.8rem;
+  gap: 0.7rem;
+  margin-bottom: 2rem;
 }
 
-.ticket-form select, .ticket-form input {
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #d1d5db;
+.sidebar-brand i { font-size: 1.4rem; }
+
+.brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+}
+
+.brand-sub {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.8rem;
   border-radius: 8px;
-  font-family: 'Poppins', sans-serif;
+  color: #d1d5db;
+  text-decoration: none;
+  font-size: 0.9rem;
 }
 
-.ticket-result, .result-text { margin-top: 1rem; }
+.nav-item:hover { background: rgba(255,255,255,0.06); }
+.nav-item.active { background: rgba(255,255,255,0.1); color: white; }
 
-.error-text { color: #dc2626; }
+.sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.profile-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.profile-box i { font-size: 1.6rem; color: #9ca3af; }
+.profile-email { font-size: 0.85rem; }
+.profile-role { font-size: 0.75rem; color: #9ca3af; }
+
+.sidebar-footer .logout-btn {
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Welcome Banner & Colored Cards */
+.welcome-banner {
+  background: #127536;
+  border-radius: 16px;
+  padding: 1.8rem 2rem;
+}
+
+.welcome-banner h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: white;
+}
+
+.welcome-banner p {
+  margin-top: 0.4rem;
+  color: #d1fae5;
+  font-size: 0.95rem;
+}
+
+.stat-green { background: #e7f8ee; }
+.stat-green i, .stat-green .stat-available, .stat-green .stat-total { color: #16a34a; }
+
+.stat-purple { background: #f1edfb; }
+.stat-purple i, .stat-purple .stat-available, .stat-purple .stat-total { color: #7c3aed; }
+
+.stat-orange { background: #fdf0e3; }
+.stat-orange i, .stat-orange .stat-available, .stat-orange .stat-total { color: #ea580c; }
