@@ -25,7 +25,7 @@ builder.Services.AddDbContext<ParkingDbContext>( options =>
 
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
-builder.Services.AddScoped<IFeeCalculator, HourlyFeeCalculator>();
+builder.Services.AddScoped<IFeeCalculator, HourlyFeeCalculator>();                  // whenever something asks for IFeeCalculator, hand them an instance of HourlyFeeCalculator
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)          // To verify Tokens
     .AddJwtBearer(options =>

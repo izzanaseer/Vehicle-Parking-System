@@ -76,8 +76,27 @@ document.getElementById("issueTicket").addEventListener("click", async () => {
   const data = await response.json();
 
   resultEl.innerHTML = `
-    <p class="success-text">Ticket #${data.ticketId} issued — Slot ${data.slotNumber}</p>
-    <button id="printBtn" class="secondary-btn"><i class="fa-solid fa-print"></i> Print Ticket</button>
+    <div class="ticket-card">
+      <div class="ticket-card-header">
+        <i class="fa-solid fa-ticket"></i>
+        <span>Ticket #${data.ticketId}</span>
+      </div>
+      <div class="ticket-card-body">
+        <div class="ticket-row">
+          <span class="ticket-label">Vehicle</span>
+          <span class="ticket-value">${data.vehicleNumber}</span>
+        </div>
+        <div class="ticket-row">
+          <span class="ticket-label">Slot</span>
+          <span class="ticket-value">${data.slotNumber}</span>
+        </div>
+        <div class="ticket-row">
+          <span class="ticket-label">Entry Time</span>
+          <span class="ticket-value">${new Date(data.entryTime).toLocaleString()}</span>
+        </div>
+      </div>
+      <button id="printBtn" class="secondary-btn"><i class="fa-solid fa-print"></i> Print Ticket</button>
+    </div>
   `;
 
   document.getElementById("printBtn").addEventListener("click", () => {

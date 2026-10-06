@@ -105,11 +105,21 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
             .Include(t => t.Vehicle)
             .FirstOrDefaultAsync(t => t.Id == id);
 
-        if (ticket is null) return NotFound("Ticket not found.");
-        if (ticket.ExitTime is not null) return Conflict("Ticket already has an exit recorded.");
+        if (ticket is null)
+        { 
+            return NotFound("Ticket not found.");
+        }
+        
+        if (ticket.ExitTime is not null)
+        {
+            return Conflict("Ticket already has an exit recorded.");
+        } 
 
         var rate = await db.VehicleRates.FirstOrDefaultAsync(r => r.Type == ticket.Vehicle.Type);
-        if (rate is null) return StatusCode(500, "No rate configured for this vehicle type.");
+        if (rate is null)
+        {
+            return StatusCode(500, "No rate configured for this vehicle type.");
+        }
 
         ticket.ExitTime = DateTime.UtcNow;
         ticket.FeeAmount = feeCalculator.CalculateFee(

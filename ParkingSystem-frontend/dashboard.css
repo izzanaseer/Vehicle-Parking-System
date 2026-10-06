@@ -1,126 +1,4 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Poppins', sans-serif;
-  color: #2b2b2b;
-}
-
-.auth-page {
-  display: flex;
-  min-height: 100vh;
-}
-
-.auth-image {
-  flex: 1;
-  background: #1f2937;
-}
-
-.auth-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  background: white; /* fills the empty space with this color */
-}
-
-.auth-form-side {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.auth-card {
-  width: 100%;
-  max-width: 380px;
-}
-
-.auth-card h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.subtext {
-  color: #6b7280;
-  margin-bottom: 2rem;
-}
-
-label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-bottom: 0.4rem;
-  margin-top: 1rem;
-}
-
-.input-wrap {
-  display: flex;
-  align-items: center;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 0.7rem 0.9rem;
-}
-
-.input-wrap i {
-  color: #9ca3af;
-  margin-right: 0.6rem;
-}
-
-.input-wrap input {
-  border: none;
-  outline: none;
-  flex: 1;
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.95rem;
-}
-
-button[type="submit"] {
-  width: 100%;
-  margin-top: 1.5rem;
-  padding: 0.8rem;
-  background: #1f2937;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-button[type="submit"]:hover {
-  background: #111827;
-}
-
-.switch-link {
-  margin-top: 1.2rem;
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.switch-link a {
-  color: #1f2937;
-  font-weight: 500;
-}
-
-
-/* NEW DASHBOARD */
 body { background: #f4f5f7; }
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 2.5rem;
-  background: #1f2937;
-  color: white;
-}
-
-.navbar-brand {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.3rem;
-}
-
-.navbar-brand i { margin-right: 0.5rem; }
 
 .logout-btn {
   background: rgba(255,255,255,0.1);
@@ -133,15 +11,6 @@ body { background: #f4f5f7; }
   cursor: pointer;
 }
 .logout-btn:hover { background: rgba(255,255,255,0.18); }
-
-.dashboard-main {
-  max-width: 1000px;
-  margin: 2.5rem auto;
-  padding: 0 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
 
 .section-header {
   display: flex;
@@ -320,10 +189,6 @@ body { background: #f4f5f7; }
   }
 }
 
-
-/* SIDEBAR */
-html, body { height: 100%; }
-
 .app-shell {
   display: flex;
   height: 100vh;
@@ -414,7 +279,6 @@ html, body { height: 100%; }
   gap: 2rem;
 }
 
-/* Welcome Banner & Colored Cards */
 .welcome-banner {
   background: #127536;
   border-radius: 16px;
@@ -441,3 +305,41 @@ html, body { height: 100%; }
 
 .stat-orange { background: #fdf0e3; }
 .stat-orange i, .stat-orange .stat-available, .stat-orange .stat-total { color: #ea580c; }
+
+.ticket-card {
+  margin-top: 1rem;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 1.2rem;
+  background: #fafafa;
+}
+
+.ticket-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  color: #1f2937;
+}
+
+.ticket-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.ticket-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.ticket-label { color: #6b7280; }
+.ticket-value { font-weight: 500; color: #1f2937; }
+
+.ticket-card .secondary-btn {
+  width: 100%;
+}
