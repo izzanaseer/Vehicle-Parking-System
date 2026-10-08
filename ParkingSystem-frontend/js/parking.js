@@ -65,9 +65,14 @@ document.getElementById("issueTicket").addEventListener("click", async () => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ vehicleNumber, vehicleType })
   });
-  if (!response) return;
 
-  if (!response.ok) {
+  if (!response) 
+  { 
+    return;
+  }
+
+  if (!response.ok) 
+  {
     const errorText = await response.text();
     resultEl.innerHTML = `<p class="error-text">${errorText}</p>`;
     return;
@@ -121,18 +126,26 @@ document.getElementById("calculateExit").addEventListener("click", async () => {
   const response = await authorizedFetch(`${API_BASE}/parking/tickets/${ticketId}/exit`, {
     method: "PATCH"
   });
-  if (!response) return;
 
-  if (response.ok) {
+  if (!response) 
+  {  
+    return;
+  }
+
+  if (response.ok) 
+  {
     const data = await response.json();
     resultEl.innerHTML = `<p class="success-text">Fee: Rs. ${data.feeAmount} — ${data.vehicleNumber}</p>`;
     showPaymentSection(ticketId);
     return;
   }
 
-  // Exit calculation failed — check the ticket's actual current state before giving up
+  // Exit calculation failed. Checking the ticket's actual current state before giving up
   const ticketResponse = await authorizedFetch(`${API_BASE}/parking/tickets/${ticketId}`);
-  if (!ticketResponse) return;
+  if (!ticketResponse) 
+  {  
+    return;
+  }
 
   if (!ticketResponse.ok) 
   {
@@ -174,9 +187,14 @@ document.getElementById("confirmPayment").addEventListener("click", async () => 
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ paymentMethod })
   });
-  if (!response) return;
 
-  if (!response.ok) {
+  if (!response)
+  {   
+    return;
+  }
+
+  if (!response.ok) 
+  {
     const errorText = await response.text();
     resultEl.innerHTML = `<p class="error-text">${errorText}</p>`;
     return;
@@ -191,7 +209,12 @@ document.getElementById("confirmPayment").addEventListener("click", async () => 
 
 document.getElementById("logout").addEventListener("click", () => {
   const confirmed = confirm("Are you sure you want to log out?");
-  if (!confirmed) return;
+  
+  if (!confirmed) 
+  {  
+    return;
+  }
+
   clearToken();
   window.location.href = "index.html";
 });
