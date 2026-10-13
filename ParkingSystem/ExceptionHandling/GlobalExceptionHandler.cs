@@ -17,6 +17,10 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         {
             DbUpdateException { InnerException: SqlException { Number: 2601 or 2627 } }
                 => (StatusCodes.Status409Conflict, "A record with the same unique value already exists."),
+            
+            _ when IsDeadlock(exception)
+                => (StatusCodes.Status409Conflict, "The system was busy with another request. Please try again."),  
+            
             _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.")
         };
 
@@ -26,5 +30,17 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
 
         return true;
+    }
+
+    private static bool IsDeadlock(Exception exception)
+    {
+        for (var e = exception; e is not null; e = e.InnerException)
+        {
+            if (e is SqlException { Number: 1205 })
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
