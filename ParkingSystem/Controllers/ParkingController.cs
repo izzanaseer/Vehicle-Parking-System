@@ -45,7 +45,7 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
         // Find or create the vehicle
         var vehicle = await db.Vehicles.FirstOrDefaultAsync(v => v.VehicleNumber == vehicleNumber);
 
-        await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+        await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
         if (vehicle is null)
         {
