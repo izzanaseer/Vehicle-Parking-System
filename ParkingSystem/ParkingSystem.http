@@ -48,6 +48,16 @@ Authorization: Bearer {{token}}
   "vehicleType": "Car"
 }
 
+### 2.1 Issue Ticket
+POST {{ParkingSystem_HostAddress}}/api/parking/tickets
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "vehicleNumber": "ABC-123",
+  "vehicleType": "Car"
+}
+
 ### 3. Calculate Exit Fee
 PATCH {{ParkingSystem_HostAddress}}/api/parking/tickets/13/exit
 Accept: application/json
