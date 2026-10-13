@@ -72,6 +72,8 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
             return Conflict($"No available {request.VehicleType} slots.");
         }
 
+        await Task.Delay(5000);   // TEMPORARY: widens the race window so we can see it
+
         slot.IsOccupied = true;
 
         var ticket = new ParkingTicket
