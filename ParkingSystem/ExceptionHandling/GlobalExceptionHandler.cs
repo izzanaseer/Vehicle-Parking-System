@@ -15,6 +15,9 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
 
         var (status, title) = exception switch
         {
+            DbUpdateConcurrencyException
+                => (StatusCodes.Status409Conflict, "This record was changed by another request. Please reload and try again."),
+                
             DbUpdateException { InnerException: SqlException { Number: 2601 or 2627 } }
                 => (StatusCodes.Status409Conflict, "A record with the same unique value already exists."),
             

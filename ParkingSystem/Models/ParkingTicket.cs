@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ParkingSystem.Models;
 
 public class ParkingTicket
@@ -16,4 +18,7 @@ public class ParkingTicket
     public decimal? FeeAmount { get; set; }
     public string? PaymentMethod { get; set; }
     public bool IsPaid { get; set; }
+    
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
 }
