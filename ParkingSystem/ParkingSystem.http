@@ -59,12 +59,17 @@ Authorization: Bearer {{token}}
 }
 
 ### 3. Calculate Exit Fee
-PATCH {{ParkingSystem_HostAddress}}/api/parking/tickets/13/exit
+PATCH {{ParkingSystem_HostAddress}}/api/parking/tickets/22/exit
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 3.1 Calculate Exit Fee
+PATCH {{ParkingSystem_HostAddress}}/api/parking/tickets/22/exit
 Accept: application/json
 Authorization: Bearer {{token}}
 
 ### 4. Record Payment
-POST {{ParkingSystem_HostAddress}}/api/parking/tickets/13/pay
+POST {{ParkingSystem_HostAddress}}/api/parking/tickets/22/pay
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
