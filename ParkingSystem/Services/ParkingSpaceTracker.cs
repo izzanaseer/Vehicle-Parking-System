@@ -15,42 +15,62 @@ public class ParkingSpaceTracker
 
     private readonly Dictionary<VehicleType, int> _totalSlots = new();
     private readonly Dictionary<VehicleType, int> _availableSlots = new();
+    private readonly object _lock = new();
 
     public void Initialize(VehicleType type, int total, int available)
     {
-        _totalSlots[type] = total;
-        _availableSlots[type] = available;
+        lock (_lock)
+        {
+            _totalSlots[type] = total;
+            _availableSlots[type] = available;
+        }
     }
 
-    public int GetTotal(VehicleType type) =>
-        _totalSlots.TryGetValue(type, out var value) ? value : 0;
+    public int GetTotal(VehicleType type)
+    {
+        lock (_lock)
+        {
+            return _totalSlots.TryGetValue(type, out var value) ? value : 0;
+        }
+    }
 
-    public int GetAvailable(VehicleType type) =>
-        _availableSlots.TryGetValue(type, out var value) ? value : 0;
+    public int GetAvailable(VehicleType type) 
+    {
+        lock (_lock)
+        {
+            return _availableSlots.TryGetValue(type, out var value) ? value : 0;
+        }
+    }
 
     public bool TryOccupySlot(VehicleType type)
     {
-        var available = GetAvailable(type);
-        if (available == 0) 
+        lock (_lock)
         {
-            return false;
-        }
+            var available = GetAvailable(type);
+            if (available == 0)
+            {
+                return false;
+            }
 
-        _availableSlots[type] = available - 1;
-        return true;
+            _availableSlots[type] = available - 1;
+            return true;
+        }
     }
 
     public bool TryReleaseSlot(VehicleType type)
     {
-        var available = GetAvailable(type);
-        var total = GetTotal(type);
-        if (available >= total) 
+        lock (_lock)
         {
-            return false;
-        }
+            var available = GetAvailable(type);
+            var total = GetTotal(type);
+            if (available >= total)
+            {
+                return false;
+            }
 
-        _availableSlots[type] = available + 1;
-        return true;
+            _availableSlots[type] = available + 1;
+            return true;
+        }
     }
     
 }
