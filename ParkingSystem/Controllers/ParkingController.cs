@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ParkingSystem.Services;
+using System.Data;
 
 using Microsoft.AspNetCore.Authorization;
 
@@ -44,6 +45,8 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
         // Find or create the vehicle
         var vehicle = await db.Vehicles.FirstOrDefaultAsync(v => v.VehicleNumber == vehicleNumber);
 
+        await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+
         if (vehicle is null)
         {
             vehicle = new Vehicle { VehicleNumber = vehicleNumber, Type = request.VehicleType };
@@ -84,6 +87,7 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
 
         db.ParkingTickets.Add(ticket);
         await db.SaveChangesAsync();
+        await tx.CommitAsync();
 
         ParkingSpaceTracker.Instance.TryOccupySlot(request.VehicleType);
 
