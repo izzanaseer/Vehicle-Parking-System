@@ -4,29 +4,26 @@ using System.Data;
 
 using Microsoft.AspNetCore.Authorization;
 
-using Microsoft.EntityFrameworkCore;
-using ParkingSystem.Data;
 using ParkingSystem.Models;
 using ParkingSystem.Dtos;
+using ParkingSystem.Repositories;
 
 namespace ParkingSystem.Controllers;
 
 [ApiController]                                         // attribute so that we turns on API behaviors
 [Route("api/[controller]")]                             // sets the URL prefix for everything in this class. [controller] is a placeholder that becomes the class name e.g ParkingController becomes parking, so the prefix is api/parking.
-public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculator) : ControllerBase
+public class ParkingController (IParkingRepository repo, IFeeCalculator feeCalculator, IParkingSpaceTracker tracker) : ControllerBase
 {
     [Authorize]
     [HttpGet("availability")]                           // answer GET requests at availability. URL becomes api/parking/availability.
     public IActionResult GetAvailability()
     {
-        var tracker = ParkingSpaceTracker.Instance;
-
         var breakdown = Enum.GetValues<VehicleType>().Select(type => new
         {
             vehicleType = type.ToString(),
             total = tracker.GetTotal(type),
             available = tracker.GetAvailable(type)
-        });
+        }).ToList();
 
         return Ok(breakdown);
     }
@@ -43,14 +40,14 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
         }
 
         // Find or create the vehicle
-        var vehicle = await db.Vehicles.FirstOrDefaultAsync(v => v.VehicleNumber == vehicleNumber);
+        var vehicle = await repo.GetVehicleByNumberAsync(vehicleNumber);
 
-        await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        await using var tx = await repo.BeginSerializableTransactionAsync();
 
         if (vehicle is null)
         {
             vehicle = new Vehicle { VehicleNumber = vehicleNumber, Type = request.VehicleType };
-            db.Vehicles.Add(vehicle);
+            repo.AddVehicle(vehicle);
         }
         else
         {
@@ -59,16 +56,13 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
                 return BadRequest($"Vehicle {vehicleNumber} is registered as {vehicle.Type}, not {request.VehicleType}.");
             }
             
-            var alreadyParked = await db.ParkingTickets
-                .AnyAsync(t => t.VehicleId == vehicle.Id && t.ExitTime == null);
-            if (alreadyParked)
+            if (await repo.HasOpenTicketAsync(vehicle.Id))
             {
                 return Conflict($"Vehicle {vehicleNumber} is already parked and hasn't exited yet.");
             }
         }
 
-        var slot = await db.ParkingSlots.FirstOrDefaultAsync(
-            s => s.SlotType == request.VehicleType && !s.IsOccupied);
+        var slot = await repo.GetFreeSlotAsync(request.VehicleType);
 
         if (slot is null)
         {
@@ -85,11 +79,11 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
             IsPaid = false
         };
 
-        db.ParkingTickets.Add(ticket);
-        await db.SaveChangesAsync();
+        repo.AddTicket(ticket);
+        await repo.SaveChangesAsync();
         await tx.CommitAsync();
 
-        ParkingSpaceTracker.Instance.TryOccupySlot(request.VehicleType);
+        tracker.TryOccupySlot(request.VehicleType);
 
         return Ok(new
         {
@@ -105,9 +99,7 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
     [HttpPatch("tickets/{id}/exit")]
     public async Task<IActionResult> CalculateExit(int id)
     {
-        var ticket = await db.ParkingTickets
-            .Include(t => t.Vehicle)
-            .FirstOrDefaultAsync(t => t.Id == id);
+        var ticket = await repo.GetTicketWithVehicleAsync(id);
 
         if (ticket is null)
         { 
@@ -119,7 +111,7 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
             return Conflict("Ticket already has an exit recorded.");
         } 
 
-        var rate = await db.VehicleRates.FirstOrDefaultAsync(r => r.Type == ticket.Vehicle.Type);
+        var rate = await repo.GetRateAsync(ticket.Vehicle.Type);
         if (rate is null)
         {
             return StatusCode(500, "No rate configured for this vehicle type.");
@@ -129,7 +121,7 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
         ticket.FeeAmount = feeCalculator.CalculateFee(
             ticket.Vehicle.Type, ticket.EntryTime, ticket.ExitTime.Value, rate.RatePerHour);
 
-        await db.SaveChangesAsync();
+        await repo.SaveChangesAsync();
 
         return Ok(new
         {
@@ -145,12 +137,11 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
     [HttpGet("tickets/{id}")]
     public async Task<IActionResult> GetTicket(int id)
     {
-        var ticket = await db.ParkingTickets
-            .Include(t => t.Vehicle)
-            .Include(t => t.Slot)
-            .FirstOrDefaultAsync(t => t.Id == id);
+        var ticket = await repo.GetTicketWithDetailsAsync(id);
 
-        if (ticket is null) return NotFound("Ticket not found.");
+        if (ticket is null) { 
+            return NotFound("Ticket not found.");
+        }
 
         return Ok(new
         {
@@ -168,10 +159,7 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
     [HttpPost("tickets/{id}/pay")]
     public async Task<IActionResult> PayTicket(int id, [FromBody] PaymentRequest request)
     {
-        var ticket = await db.ParkingTickets
-            .Include(t => t.Slot)
-            .Include(t => t.Vehicle)
-            .FirstOrDefaultAsync(t => t.Id == id);
+        var ticket = await repo.GetTicketWithDetailsAsync(id);
 
         if (ticket is null) 
         {
@@ -192,8 +180,8 @@ public class ParkingController (ParkingDbContext db, IFeeCalculator feeCalculato
         ticket.IsPaid = true;
         ticket.Slot.IsOccupied = false;
 
-        await db.SaveChangesAsync();
-        ParkingSpaceTracker.Instance.TryReleaseSlot(ticket.Vehicle.Type);
+        await repo.SaveChangesAsync();
+        tracker.TryReleaseSlot(ticket.Vehicle.Type);
 
         return Ok(new
         {

@@ -1,7 +1,7 @@
 using ParkingSystem.Models;
 namespace ParkingSystem.Services;
 
-public class ParkingSpaceTracker
+public class ParkingSpaceTracker : IParkingSpaceTracker
 {
     /*
     The first line creates the one tracker object and stores it. The second, the private 

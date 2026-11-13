@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using ParkingSystem.ExceptionHandling;
+using ParkingSystem.Repositories;
 
 
 
@@ -27,6 +28,8 @@ builder.Services.AddDbContext<ParkingDbContext>( options =>
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
 builder.Services.AddScoped<IFeeCalculator, HourlyFeeCalculator>();                  // whenever something asks for IFeeCalculator, hand them an instance of HourlyFeeCalculator
+builder.Services.AddScoped<IParkingRepository, ParkingRepository>();
+builder.Services.AddSingleton<IParkingSpaceTracker>(ParkingSpaceTracker.Instance);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)          // To verify Tokens
     .AddJwtBearer(options =>
