@@ -61,15 +61,18 @@ builder.Services.AddProblemDetails();
 var app = builder.Build();
 app.UseExceptionHandler();
 
-using (var scope = app.Services.CreateScope())
+if (!app.Environment.IsEnvironment("Testing"))
 {
-    var db = scope.ServiceProvider.GetRequiredService<ParkingDbContext>();
-
-    foreach (var type in Enum.GetValues<VehicleType>())
+    using (var scope = app.Services.CreateScope())
     {
-        var total = db.ParkingSlots.Count(s => s.SlotType == type);
-        var occupied = db.ParkingSlots.Count(s => s.SlotType == type && s.IsOccupied);
-        ParkingSpaceTracker.Instance.Initialize(type, total, total - occupied);
+        var db = scope.ServiceProvider.GetRequiredService<ParkingDbContext>();
+
+        foreach (var type in Enum.GetValues<VehicleType>())
+        {
+            var total = db.ParkingSlots.Count(s => s.SlotType == type);
+            var occupied = db.ParkingSlots.Count(s => s.SlotType == type && s.IsOccupied);
+            ParkingSpaceTracker.Instance.Initialize(type, total, total - occupied);
+        }
     }
 }
 
@@ -86,3 +89,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
